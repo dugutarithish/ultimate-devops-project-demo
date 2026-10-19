@@ -8,9 +8,30 @@ A DevOps learning project that packages and deploys the OpenTelemetry Astronomy 
 
 The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service map below is the architecture of the demo application, not the AWS infrastructure diagram.
 
-![OpenTelemetry Astronomy Shop microservices architecture](https://raw.githubusercontent.com/dugutarithish/ultimate-devops-project-demo/main/docs/images/architecture.png)
+```mermaid
+flowchart TD
+    U[User / Browser] --> DNS[Amazon Route 53]
+    DNS --> ING[Ingress / Load Balancer]
+    ING --> FP[Frontend Proxy]
+    subgraph AWS["AWS VPC"]
+        subgraph PUB["Public Subnets"]
+            B[Bastion Host]
+            ING
+        end
+        subgraph PRIV["Private Subnets"]
+            EKS[Amazon EKS]
+            FP --> SVC[Kubernetes Services]
+            SVC --> MS[Microservices]
+        end
+    end
+    TF[Terraform] -. provisions .-> AWS
+    GA[GitHub Actions CI] --> REG[Container Registry]
+    GA --> GIT[Git Repository]
+    GIT --> ARGO[Argo CD + Helm]
+    ARGO --> EKS
+```
 
-> Replace the architecture image path above with the actual committed image path if you add the screenshot to this repository. The original architecture screenshot is not currently assumed to exist at this path.
+The diagram is a simplified view of the deployment flow, not a representation of every AWS resource or service dependency.
 
 ## What I built and practised
 
