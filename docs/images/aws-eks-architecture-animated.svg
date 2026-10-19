@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1080" viewBox="0 0 1600 1080" role="img" aria-labelledby="title desc">
+<title id="title">OpenTelemetry Astronomy Shop on AWS EKS</title>
+<desc id="desc">Animated AWS architecture. User requests travel from browser through Route 53 and an internet-facing load balancer to the frontend proxy, Kubernetes Services, and microservices in private EKS subnets. Admin access follows a separate route through an EC2 bastion to the private EKS API. Terraform provisions the infrastructure, while GitHub Actions, an image registry, GitOps configuration, and Argo CD with Helm form the delivery workflow.</desc>
+<defs>
+  <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07111F"/><stop offset=".56" stop-color="#0B192A"/><stop offset="1" stop-color="#07111F"/></linearGradient>
+  <linearGradient id="headerLine"><stop stop-color="#44DFC7"/><stop offset=".5" stop-color="#6EBEFF"/><stop offset="1" stop-color="#C59BFF"/></linearGradient>
+  <filter id="shadow" x="-15%" y="-15%" width="130%" height="145%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity=".22"/></filter>
+  <marker id="trafficArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#44DFC7"/></marker>
+  <marker id="adminArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#FFC16B"/></marker>
+  <marker id="infraArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#6EBEFF"/></marker>
+  <marker id="gitopsArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#C59BFF"/></marker>
+  <style>
+    text{font-family:Inter,Segoe UI,Arial,sans-serif}
+    .heading{font-size:29px;font-weight:750;fill:#F3F7FF}
+    .subtitle{font-size:15px;fill:#9DB2C8}
+    .section{font-size:13px;font-weight:750;letter-spacing:1px}
+    .node{fill:#13263A;stroke:#29445F;stroke-width:1.5;filter:url(#shadow)}
+    .nodeGit{fill:#1B203A;stroke:#3B4167;stroke-width:1.5;filter:url(#shadow)}
+    .nodeTitle{font-size:16px;font-weight:700;fill:#F3F7FF}
+    .nodeSub{font-size:12.5px;fill:#9DB2C8}
+    .flow{fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:12 9;animation:dash 1.25s linear infinite}
+    .traffic{stroke:#44DFC7;marker-end:url(#trafficArrow)}
+    .admin{stroke:#FFC16B;marker-end:url(#adminArrow)}
+    .infra{stroke:#6EBEFF;marker-end:url(#infraArrow)}
+    .gitops{stroke:#C59BFF;marker-end:url(#gitopsArrow)}
+    @keyframes dash{to{stroke-dashoffset:-42}}
+    @-webkit-keyframes dash{to{stroke-dashoffset:-42}}
+    @media(prefers-reduced-motion:reduce){.flow{animation:none;stroke-dasharray:none}}
+  </style>
+</defs>
+<rect width="1600" height="1080" fill="url(#background)"/>
+<g opacity=".12" stroke="#1B3046" stroke-width="1"><path d="M0 80H1600 M0 160H1600 M0 240H1600 M0 320H1600 M0 400H1600 M0 480H1600 M0 560H1600 M0 640H1600 M0 720H1600 M0 800H1600 M0 880H1600 M0 960H1600 M80 0V1080 M160 0V1080 M240 0V1080 M320 0V1080 M400 0V1080 M480 0V1080 M560 0V1080 M640 0V1080 M720 0V1080 M800 0V1080 M880 0V1080 M960 0V1080 M1040 0V1080 M1120 0V1080 M1200 0V1080 M1280 0V1080 M1360 0V1080 M1440 0V1080 M1520 0V1080"/></g>
+<rect x="28" y="22" width="1544" height="92" rx="19" fill="#0B1727" stroke="#1E344B" stroke-width="1.4"/>
+<rect x="28" y="22" width="6" height="92" rx="3" fill="url(#headerLine)"/>
+<text x="57" y="60" class="heading">OpenTelemetry Astronomy Shop</text>
+<text x="58" y="88" class="subtitle">AWS EKS deployment architecture · traffic, administration, provisioning and GitOps</text>
+<g transform="translate(1050 43)"><circle cx="0" cy="0" r="5" fill="#44DFC7"/><text x="13" y="5" fill="#F3F7FF" font-size="13">User traffic</text><circle cx="122" cy="0" r="5" fill="#FFC16B"/><text x="135" y="5" fill="#F3F7FF" font-size="13">Admin access</text><circle cx="0" cy="28" r="5" fill="#6EBEFF"/><text x="13" y="33" fill="#F3F7FF" font-size="13">Terraform / IaC</text><circle cx="170" cy="28" r="5" fill="#C59BFF"/><text x="183" y="33" fill="#F3F7FF" font-size="13">CI/CD + GitOps</text></g>
+<!-- Public request and DNS path -->
+<rect x="34" y="275" width="151" height="91" rx="13" class="node"/><rect x="46" y="288" width="4" height="65" rx="2" fill="#44DFC7"/><text x="61" y="305" class="nodeTitle">User / Browser</text><text x="61" y="330" class="nodeSub">Requests site</text><text x="61" y="347" class="nodeSub">rithish.co.in</text>
+<rect x="211" y="275" width="159" height="91" rx="13" class="node"/><rect x="223" y="288" width="4" height="65" rx="2" fill="#44DFC7"/><text x="238" y="305" class="nodeTitle">Amazon</text><text x="238" y="326" class="nodeTitle">Route 53</text><text x="238" y="347" class="nodeSub">DNS lookup</text>
+<path class="flow traffic" d="M185 320 H205"/>
+<path class="flow traffic" d="M370 320 H409"/>
+<text x="184" y="307" font-size="11.5" fill="#44DFC7">DNS</text>
+<!-- AWS VPC network -->
+<rect x="395" y="146" width="1177" height="434" rx="22" fill="#0B192A" stroke="#3D5A75" stroke-width="2"/>
+<rect x="414" y="160" width="112" height="27" rx="13.5" fill="#14273A" stroke="#6EBEFF"/><text x="470" y="178" text-anchor="middle" class="section" fill="#6EBEFF">AWS VPC</text>
+<text x="538" y="179" class="subtitle">Isolated network · subnet groups across multiple Availability Zones</text>
+<!-- public subnets -->
+<rect x="412" y="204" width="235" height="351" rx="17" fill="#101F31" stroke="#52647A" stroke-width="1.5"/>
+<rect x="427" y="219" width="150" height="26" rx="13" fill="#28251F" stroke="#FFC16B"/><text x="502" y="236" text-anchor="middle" class="section" fill="#FFC16B">PUBLIC SUBNETS</text>
+<text x="428" y="263" class="nodeSub">AZ-A / AZ-B</text>
+<rect x="427" y="279" width="204" height="103" rx="13" class="node"/><rect x="439" y="292" width="4" height="77" rx="2" fill="#44DFC7"/><text x="454" y="305" class="nodeTitle">Internet-facing ALB</text><text x="454" y="328" class="nodeSub">Ingress / Load Balancer</text><text x="454" y="350" class="nodeSub">Public entry point</text>
+<rect x="427" y="418" width="204" height="102" rx="13" class="node"/><rect x="439" y="431" width="4" height="76" rx="2" fill="#FFC16B"/><text x="454" y="445" class="nodeTitle">EC2 Bastion Host</text><text x="454" y="468" class="nodeSub">Controlled admin access</text><text x="454" y="488" class="nodeSub">to private resources</text>
+<!-- private subnets and cluster -->
+<rect x="663" y="204" width="889" height="351" rx="17" fill="#0E1D30" stroke="#52647A" stroke-width="1.5"/>
+<rect x="680" y="219" width="162" height="26" rx="13" fill="#14273A" stroke="#6EBEFF"/><text x="761" y="236" text-anchor="middle" class="section" fill="#6EBEFF">PRIVATE SUBNETS</text><text x="851" y="237" class="nodeSub">AZ-A / AZ-B · workloads stay private</text>
+<rect x="680" y="258" width="854" height="274" rx="17" fill="#0A1727" stroke="#38546F" stroke-width="1.7"/>
+<rect x="698" y="273" width="190" height="27" rx="13" fill="#14273A" stroke="#6EBEFF"/><text x="793" y="291" text-anchor="middle" class="section" fill="#6EBEFF">AMAZON EKS CLUSTER</text><text x="901" y="291" class="nodeSub">Kubernetes workloads</text>
+<rect x="699" y="331" width="178" height="98" rx="13" class="node"/><rect x="711" y="344" width="4" height="72" rx="2" fill="#44DFC7"/><text x="726" y="362" class="nodeTitle">Frontend Proxy</text><text x="726" y="387" class="nodeSub">Web application</text><text x="726" y="405" class="nodeSub">entry point</text>
+<rect x="926" y="331" width="195" height="98" rx="13" class="node"/><rect x="938" y="344" width="4" height="72" rx="2" fill="#44DFC7"/><text x="953" y="362" class="nodeTitle">Kubernetes Services</text><text x="953" y="387" class="nodeSub">Service discovery</text><text x="953" y="405" class="nodeSub">and internal routing</text>
+<rect x="1170" y="313" width="338" height="134" rx="13" class="node"/><rect x="1182" y="326" width="4" height="108" rx="2" fill="#44DFC7"/><text x="1197" y="345" class="nodeTitle">Microservices</text><text x="1197" y="367" class="nodeSub">Independent application components</text>
+<g font-size="12" font-weight="650" text-anchor="middle"><rect x="1197" y="388" width="62" height="28" rx="8" fill="#102D3A" stroke="#44DFC7"/><text x="1228" y="406" fill="#D8FFF6">Frontend</text><rect x="1267" y="388" width="50" height="28" rx="8" fill="#18263F" stroke="#6EBEFF"/><text x="1292" y="406" fill="#DCEBFF">Cart</text><rect x="1325" y="388" width="77" height="28" rx="8" fill="#25213B" stroke="#C59BFF"/><text x="1363" y="406" fill="#F1E5FF">Checkout</text><rect x="1410" y="388" width="79" height="28" rx="8" fill="#183329" stroke="#72E6A5"/><text x="1449" y="406" fill="#DFFFEA">Catalog</text></g>
+<rect x="699" y="451" width="290" height="57" rx="11" fill="#182B40" stroke="#526B83"/><text x="715" y="474" class="nodeTitle">Private EKS API endpoint</text><text x="715" y="493" class="nodeSub">kubectl / cluster administration</text>
+<!-- User traffic arrow path: Route 53 -> ALB -> app path -->
+<path class="flow traffic" d="M631 330 H675 V380 H694"/>
+<path class="flow traffic" d="M877 380 H920"/>
+<path class="flow traffic" d="M1121 380 H1164"/>
+<text x="647" y="313" class="nodeSub" fill="#44DFC7">HTTPS</text><text x="886" y="367" class="nodeSub" fill="#44DFC7">HTTP / gRPC</text>
+<!-- separate administrative route -->
+<rect x="34" y="431" width="151" height="90" rx="13" class="node"/><rect x="46" y="444" width="4" height="64" rx="2" fill="#FFC16B"/><text x="61" y="462" class="nodeTitle">Admin / Dev PC</text><text x="61" y="485" class="nodeSub">SSH / kubectl</text>
+<path class="flow admin" d="M185 476 H310 V469 H420"/>
+<path class="flow admin" d="M631 468 H694"/>
+<text x="260" y="461" class="nodeSub" fill="#FFC16B">restricted access</text>
+<text x="45" y="566" font-size="11.5" fill="#9DB2C8">Bastion is for administration, not normal website traffic.</text>
+<!-- Terraform -->
+<rect x="28" y="610" width="1544" height="139" rx="18" fill="#0A1727" stroke="#233B52" stroke-width="1.4"/>
+<rect x="48" y="625" width="258" height="26" rx="13" fill="#14273A" stroke="#6EBEFF"/><text x="177" y="642" text-anchor="middle" class="section" fill="#6EBEFF">01 · INFRASTRUCTURE PROVISIONING</text><text x="326" y="642" class="subtitle">Terraform creates the VPC, subnet layout and EKS foundation</text>
+<rect x="48" y="664" width="218" height="67" rx="12" class="node"/><rect x="60" y="676" width="4" height="43" rx="2" fill="#6EBEFF"/><text x="75" y="689" class="nodeTitle">Terraform</text><text x="75" y="712" class="nodeSub">Infrastructure as Code</text>
+<rect x="338" y="664" width="218" height="67" rx="12" class="node"/><rect x="350" y="676" width="4" height="43" rx="2" fill="#6EBEFF"/><text x="365" y="689" class="nodeTitle">AWS VPC</text><text x="365" y="712" class="nodeSub">Isolated network</text>
+<rect x="628" y="664" width="260" height="67" rx="12" class="node"/><rect x="640" y="676" width="4" height="43" rx="2" fill="#6EBEFF"/><text x="655" y="689" class="nodeTitle">Public + Private Subnets</text><text x="655" y="712" class="nodeSub">Across multiple AZs</text>
+<rect x="960" y="664" width="226" height="67" rx="12" class="node"/><rect x="972" y="676" width="4" height="43" rx="2" fill="#6EBEFF"/><text x="987" y="689" class="nodeTitle">Amazon EKS</text><text x="987" y="712" class="nodeSub">Managed Kubernetes</text>
+<rect x="1258" y="664" width="294" height="67" rx="12" class="node"/><rect x="1270" y="676" width="4" height="43" rx="2" fill="#6EBEFF"/><text x="1285" y="689" class="nodeTitle">Cluster-ready network</text><text x="1285" y="712" class="nodeSub">Private workloads + public entry</text>
+<path class="flow infra" d="M266 698 H332"/><path class="flow infra" d="M556 698 H622"/><path class="flow infra" d="M888 698 H954"/><path class="flow infra" d="M1186 698 H1252"/>
+<!-- CI/CD -->
+<rect x="28" y="772" width="1544" height="281" rx="18" fill="#0A1727" stroke="#233B52" stroke-width="1.4"/>
+<rect x="48" y="787" width="234" height="26" rx="13" fill="#1B203A" stroke="#C59BFF"/><text x="165" y="804" text-anchor="middle" class="section" fill="#C59BFF">02 · CI / CD · GITOPS</text><text x="300" y="804" class="subtitle">Build versioned images, commit deployment intent, let Argo CD reconcile EKS</text>
+<g>
+<rect x="48" y="831" width="210" height="90" rx="12" class="nodeGit"/><rect x="60" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="75" y="858" class="nodeTitle">Source Repository</text><text x="75" y="882" class="nodeSub">Push / pull request</text>
+<rect x="302" y="831" width="210" height="90" rx="12" class="nodeGit"/><rect x="314" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="329" y="858" class="nodeTitle">GitHub Actions</text><text x="329" y="882" class="nodeSub">Tests · analysis · build</text>
+<rect x="556" y="831" width="210" height="90" rx="12" class="nodeGit"/><rect x="568" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="583" y="858" class="nodeTitle">Image Registry</text><text x="583" y="882" class="nodeSub">Versioned image tag</text>
+<rect x="810" y="831" width="210" height="90" rx="12" class="nodeGit"/><rect x="822" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="837" y="858" class="nodeTitle">GitOps Configuration</text><text x="837" y="882" class="nodeSub">Manifest / Helm values</text>
+<rect x="1064" y="831" width="210" height="90" rx="12" class="nodeGit"/><rect x="1076" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="1091" y="858" class="nodeTitle">Argo CD + Helm</text><text x="1091" y="882" class="nodeSub">Sync desired state</text>
+<rect x="1318" y="831" width="234" height="90" rx="12" class="nodeGit"/><rect x="1330" y="843" width="4" height="66" rx="2" fill="#C59BFF"/><text x="1345" y="858" class="nodeTitle">EKS Deployment</text><text x="1345" y="882" class="nodeSub">Services + microservices</text>
+</g>
+<path class="flow gitops" d="M258 876 H296"/><path class="flow gitops" d="M512 876 H550"/><path class="flow gitops" d="M766 876 H804"/><path class="flow gitops" d="M1020 876 H1058"/><path class="flow gitops" d="M1274 876 H1312"/>
+<text x="48" y="975" font-size="12" fill="#7F96AF">Flow is illustrative, not live telemetry. Confirm the committed Terraform, Ingress, Helm, and Argo CD configuration before deployment.</text>
+<text x="48" y="1004" font-size="12" fill="#7F96AF">Architecture is a conceptual deployment view; exact public/private placement depends on the active AWS configuration.</text>
+</svg>
