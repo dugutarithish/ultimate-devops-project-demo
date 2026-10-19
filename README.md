@@ -1,12 +1,12 @@
 # OpenTelemetry Astronomy Shop on AWS EKS
 
-A DevOps learning project that packages and deploys the OpenTelemetry Astronomy Shop Demo, a microservices-based e-commerce application, on Amazon EKS. I used this project to practice containerization, Kubernetes deployment, AWS networking, Terraform, Helm, GitHub Actions, Argo CD, and custom-domain routing.
+A DevOps learning project based on the OpenTelemetry Astronomy Shop Demo, a microservices-based e-commerce application. I used it to practise Docker, Kubernetes, AWS networking, Terraform, Helm, GitHub Actions, Argo CD, and custom-domain routing. The current repository includes the application source, Kubernetes manifests, and a GitHub Actions workflow; the Terraform, Helm chart, and Argo CD configuration used in my AWS deployment are not committed to this branch yet.
 
 > **Project note:** This repository is a fork and deployment adaptation of the upstream OpenTelemetry Demo. The application itself is the Astronomy Shop demo; my work focuses on the DevOps infrastructure and delivery workflow around it. See the credits below.
 
 ## Project overview
 
-The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service map below is the architecture of the demo application, not the AWS infrastructure diagram.
+The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service map below is the architecture of the demo application, not the AWS infrastructure diagram. The deployment diagram later in this README describes the environment I worked with; it is not a claim that every infrastructure file is present in this repository.
 
 ```mermaid
 flowchart TD
@@ -35,19 +35,19 @@ The diagram is a simplified view of the deployment flow, not a representation of
 
 ## What I built and practised
 
-- **Docker:** Reviewed and built Docker images for the application's different services. Worked with service-specific Dockerfiles and multi-stage builds to separate build-time dependencies from runtime images.
-- **Kubernetes:** Prepared Kubernetes Deployments and Services for the microservices and learned how workloads discover and communicate with each other inside the cluster.
-- **Helm:** Used Helm charts to package and manage Kubernetes resources, including installing, upgrading, and uninstalling releases.
-- **AWS infrastructure with Terraform:** Provisioned the VPC and EKS infrastructure with public and private subnets across multiple Availability Zones.
-- **Terraform remote state:** Configured an S3 backend for Terraform state and DynamoDB-based state locking in the setup I used. Confirm the backend configuration in the current Terraform files before recreating it; locking configuration can vary by Terraform version.
-- **Cluster access:** Used an EC2 bastion host as an administrative access point to reach private resources and work with the EKS cluster.
-- **Ingress and domain routing:** Configured ingress-based routing toward the frontend proxy and connected DNS for my domain, `rithish.co.in`, using Amazon Route 53. The domain and DNS are environment-specific and require valid DNS records and a working ingress endpoint.
-- **CI with GitHub Actions:** Practised automated build and test steps, code-quality checks, and building/pushing container images.
-- **CD with Argo CD and Helm:** Used a GitOps workflow in which Argo CD reconciles Kubernetes resources from the Git repository and Helm configuration. The exact trigger and image-update behaviour depends on the workflow and Argo CD configuration committed in this repository.
+- **Docker:** Built and worked with service-specific Dockerfiles and multi-stage builds, separating build-time dependencies from runtime artifacts.
+- **Kubernetes:** Worked with Deployments, Services, and ingress configuration for the microservices. Kubernetes manifests are present under `kubernetes/`.
+- **Helm:** Used Helm to install, manage, upgrade, and uninstall Kubernetes releases in my deployment environment. The Helm chart is not currently committed to this branch.
+- **AWS infrastructure with Terraform:** Built a VPC/EKS environment with public and private subnets across multiple Availability Zones. The Terraform source files used for that environment are not currently committed here.
+- **Terraform remote state:** Practised storing Terraform state in S3 and locking state through DynamoDB in the setup I used. The corresponding backend configuration is not included in this branch.
+- **Cluster access:** Used an EC2 bastion host to access private resources and administer the EKS environment.
+- **Ingress and domain routing:** Configured ingress-based routing toward the frontend proxy and Route 53 DNS for `rithish.co.in` in my environment. The AWS DNS and ingress resources are environment-specific.
+- **CI with GitHub Actions:** The committed workflow currently targets the Product Catalog service for build/test, quality checks, and container-image steps. It is not yet a complete CI pipeline for all application services.
+- **CD with Argo CD and Helm:** Practised a GitOps delivery flow with Argo CD and Helm. The Argo CD Application and Helm chart configuration are not currently committed, so that part of the deployment cannot be reproduced from this repository alone.
 
 ## Architecture
 
-The high-level deployment flow is:
+The high-level deployment flow I practised is shown below. Some AWS and GitOps configuration represented here is not currently committed to this repository.
 
 ```text
 Developer pushes code
@@ -109,25 +109,29 @@ This is a learning deployment, not a claim of production readiness. Before using
 
 ## Repository structure
 
-Important project paths include:
+Important committed paths include:
 
 - `src/` — application microservices and source code.
-- `kubernetes/` — Kubernetes workload manifests, Services, and ingress configuration.
-- `.github/workflows/` — GitHub Actions workflows.
+- `kubernetes/` — Kubernetes workload manifests and Service/Ingress configuration.
+- `.github/workflows/ci.yaml` — GitHub Actions workflow.
 - `docker-compose.yml` — local multi-container demo setup.
 - `docker-compose.minimal.yml` — reduced local demo configuration.
 
-Terraform and Helm paths may differ by branch or by the files used to provision the environment. Check the repository tree before running deployment commands.
+**Reproducibility gap:** The current `main` branch does not contain Terraform modules, a Helm chart, or Argo CD Application manifests. Add the actual files from your deployment environment if you want others to recreate the full AWS/EKS deployment from this repository. Do not add placeholder files that do not match the environment you tested.
 
 ## CI/CD workflow
 
-1. A code change is pushed to GitHub or a pull request is opened.
-2. GitHub Actions runs the configured checks, including service tests/build and code-quality steps where defined.
-3. The pipeline builds a container image and pushes it to the configured registry when the workflow conditions and credentials allow.
-4. The deployment configuration is updated to reference the intended image version, if that step is enabled in the workflow.
-5. Argo CD detects Git changes and reconciles the application's desired state into EKS using the configured manifests or Helm chart.
+The delivery flow I practised is:
 
-Use immutable image tags (for example, a commit SHA) rather than relying only on `latest`. Keep registry credentials and AWS credentials in GitHub Secrets or an appropriate identity-based configuration. Never commit real credentials, private keys, or sensitive `.env` values.
+1. A code change is submitted through GitHub.
+2. GitHub Actions runs the configured build, test, and code-quality steps.
+3. A container image is built and pushed to a registry when the workflow is configured and credentials are available.
+4. The deployment configuration references the intended image version.
+5. Argo CD reconciles the desired Kubernetes state from Git using manifests or Helm.
+
+**What the checked-in workflow currently does:** `.github/workflows/ci.yaml` triggers on pull requests to `main` and focuses on the Product Catalog service. The Argo CD and Helm configuration described above is not in this branch, so do not treat the current repository as a fully reproducible end-to-end CI/CD setup yet.
+
+Use immutable image tags (such as a commit SHA or run-specific tag) rather than relying only on `latest`. Store real registry/AWS credentials in GitHub Secrets or use identity-based access. Do not commit real credentials or private keys.
 
 ## Key things I learned
 
