@@ -1,37 +1,25 @@
 # OpenTelemetry Astronomy Shop on AWS EKS
 
-A DevOps learning project based on the OpenTelemetry Astronomy Shop Demo, a microservices-based e-commerce application. I used it to practise Docker, Kubernetes, AWS networking, Terraform, Helm, GitHub Actions, Argo CD, and custom-domain routing. The current repository includes the application source, Kubernetes manifests, and a GitHub Actions workflow; the Terraform, Helm chart, and Argo CD configuration used in my AWS deployment are not committed to this branch yet.
+A DevOps learning project based on the OpenTelemetry Astronomy Shop Demo, a microservices-based e-commerce application. I used it to practise Docker, Kubernetes, AWS networking, Terraform, Helm, GitHub Actions, Argo CD, and custom-domain routing.
 
 > **Project note:** This repository is a fork and deployment adaptation of the upstream OpenTelemetry Demo. The application itself is the Astronomy Shop demo; my work focuses on the DevOps infrastructure and delivery workflow around it. See the credits below.
 
+## Animated Deployment Architecture
+
+![Animated AWS EKS architecture showing traffic flow, VPC subnets, bastion access, Terraform provisioning, and CI/CD with GitHub Actions and Argo CD](docs/images/aws-eks-architecture-animated.svg)
+
+This animated diagram gives an overview of how the application is intended to be exposed and deployed on AWS. The moving arrows indicate the direction of each workflow.
+
+- **Application traffic (green):** User / Browser → Amazon Route 53 → internet-facing load balancer / Ingress → Frontend Proxy → Kubernetes Services → Astronomy Shop microservices.
+- **Administrative access (amber):** Admin / Dev PC → EC2 Bastion Host → private EKS API endpoint. The bastion is for controlled administration, not normal website traffic.
+- **Infrastructure provisioning (blue):** Terraform → AWS VPC → public and private subnets across multiple Availability Zones → Amazon EKS.
+- **CI/CD and GitOps (purple):** Source Repository → GitHub Actions checks and image build → Container Registry → GitOps configuration → Argo CD + Helm → EKS workloads.
+
+> **Architecture note:** This is an illustrative architecture diagram, not live telemetry. The Terraform modules, Helm chart, and Argo CD Application configuration used in my deployment are not currently committed to this branch, so the complete AWS deployment is not reproducible from this repository alone. The precise subnet and load-balancer setup must be confirmed against the active AWS configuration.
+
 ## Project overview
 
-The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service map below is the architecture of the demo application, not the AWS infrastructure diagram. The deployment diagram later in this README describes the environment I worked with; it is not a claim that every infrastructure file is present in this repository.
-
-```mermaid
-flowchart TD
-    U[User / Browser] --> DNS[Amazon Route 53]
-    DNS --> ING[Ingress / Load Balancer]
-    ING --> FP[Frontend Proxy]
-    subgraph AWS["AWS VPC"]
-        subgraph PUB["Public Subnets"]
-            B[Bastion Host]
-            ING
-        end
-        subgraph PRIV["Private Subnets"]
-            EKS[Amazon EKS]
-            FP --> SVC[Kubernetes Services]
-            SVC --> MS[Microservices]
-        end
-    end
-    TF[Terraform] -. provisions .-> AWS
-    GA[GitHub Actions CI] --> REG[Container Registry]
-    GA --> GIT[Git Repository]
-    GIT --> ARGO[Argo CD + Helm]
-    ARGO --> EKS
-```
-
-The diagram is a simplified view of the deployment flow, not a representation of every AWS resource or service dependency.
+The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service architecture of the application is distinct from the AWS deployment architecture shown above.
 
 ## What I built and practised
 
