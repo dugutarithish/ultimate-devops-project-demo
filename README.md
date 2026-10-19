@@ -1,104 +1,150 @@
-**Note:** This project is a fork of `opentelemetry-demo`. Thanks to the team and contributors for opensourcing this wonderful demo project. Definitely one of the best on internet.
+# OpenTelemetry Astronomy Shop on AWS EKS
 
-<!-- markdownlint-disable-next-line -->
-# <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
+A DevOps learning project that packages and deploys the OpenTelemetry Astronomy Shop Demo, a microservices-based e-commerce application, on Amazon EKS. I used this project to practice containerization, Kubernetes deployment, AWS networking, Terraform, Helm, GitHub Actions, Argo CD, and custom-domain routing.
 
-[![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
-[![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
-[![Commits](https://img.shields.io/github/commits-since/open-telemetry/opentelemetry-demo/latest?color=ff69b4&include_prereleases)](https://github.com/open-telemetry/opentelemetry-demo/graphs/commit-activity)
-[![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
-[![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-demo)](https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9247/badge)](https://www.bestpractices.dev/en/projects/9247)
+> **Project note:** This repository is a fork and deployment adaptation of the upstream OpenTelemetry Demo. The application itself is the Astronomy Shop demo; my work focuses on the DevOps infrastructure and delivery workflow around it. See the credits below.
 
-## Welcome to the OpenTelemetry Astronomy Shop Demo
+## Project overview
 
-This repository contains the OpenTelemetry Astronomy Shop, a microservice-based
-distributed system intended to illustrate the implementation of OpenTelemetry in
-a near real-world environment.
+The Astronomy Shop simulates an online store for astronomy-related products such as telescopes. It consists of multiple services written in different languages and communicating through protocols such as gRPC, HTTP, and TCP. The service map below is the architecture of the demo application, not the AWS infrastructure diagram.
 
-Our goals are threefold:
+![OpenTelemetry Astronomy Shop microservices architecture](https://raw.githubusercontent.com/dugutarithish/ultimate-devops-project-demo/main/docs/images/architecture.png)
 
-- Provide a realistic example of a distributed system that can be used to
-  demonstrate OpenTelemetry instrumentation and observability.
-- Build a base for vendors, tooling authors, and others to extend and
-  demonstrate their OpenTelemetry integrations.
-- Create a living example for OpenTelemetry contributors to use for testing new
-  versions of the API, SDK, and other components or enhancements.
+> Replace the architecture image path above with the actual committed image path if you add the screenshot to this repository. The original architecture screenshot is not currently assumed to exist at this path.
 
-We've already made [huge
-progress](https://github.com/open-telemetry/opentelemetry-demo/blob/main/CHANGELOG.md),
-and development is ongoing. We hope to represent the full feature set of
-OpenTelemetry across its languages in the future.
+## What I built and practised
 
-If you'd like to help (**which we would love**), check out our [contributing
-guidance](./CONTRIBUTING.md).
+- **Docker:** Reviewed and built Docker images for the application's different services. Worked with service-specific Dockerfiles and multi-stage builds to separate build-time dependencies from runtime images.
+- **Kubernetes:** Prepared Kubernetes Deployments and Services for the microservices and learned how workloads discover and communicate with each other inside the cluster.
+- **Helm:** Used Helm charts to package and manage Kubernetes resources, including installing, upgrading, and uninstalling releases.
+- **AWS infrastructure with Terraform:** Provisioned the VPC and EKS infrastructure with public and private subnets across multiple Availability Zones.
+- **Terraform remote state:** Configured an S3 backend for Terraform state and DynamoDB-based state locking in the setup I used. Confirm the backend configuration in the current Terraform files before recreating it; locking configuration can vary by Terraform version.
+- **Cluster access:** Used an EC2 bastion host as an administrative access point to reach private resources and work with the EKS cluster.
+- **Ingress and domain routing:** Configured ingress-based routing toward the frontend proxy and connected DNS for my domain, `rithish.co.in`, using Amazon Route 53. The domain and DNS are environment-specific and require valid DNS records and a working ingress endpoint.
+- **CI with GitHub Actions:** Practised automated build and test steps, code-quality checks, and building/pushing container images.
+- **CD with Argo CD and Helm:** Used a GitOps workflow in which Argo CD reconciles Kubernetes resources from the Git repository and Helm configuration. The exact trigger and image-update behaviour depends on the workflow and Argo CD configuration committed in this repository.
 
-If you'd like to extend this demo or maintain a fork of it, read our
-[fork guidance](https://opentelemetry.io/docs/demo/forking/).
+## Architecture
 
-## Quick start
+The high-level deployment flow is:
 
-You can be up and running with the demo in a few minutes. Check out the docs for
-your preferred deployment method:
+```text
+Developer pushes code
+        |
+        v
+GitHub repository
+        |
+        v
+GitHub Actions (CI)
+  - checkout
+  - tests and quality checks
+  - build container image
+  - push image to registry
+        |
+        v
+Updated deployment configuration in Git
+        |
+        v
+Argo CD + Helm (CD / GitOps)
+        |
+        v
+Amazon EKS cluster in private subnets
+        |
+        v
+Kubernetes Services -> Frontend Proxy -> Astronomy Shop
+        ^
+        |
+Ingress / load balancer
+        ^
+        |
+Route 53 DNS -> rithish.co.in
+```
 
-- [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
-- [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
+### AWS network layout
 
-## Documentation
+- **VPC:** Isolated network for the deployment.
+- **Public subnets:** Used for public-facing infrastructure and the bastion host, according to the deployment setup.
+- **Private subnets:** Used for the EKS worker capacity and application workloads.
+- **Multiple Availability Zones:** Subnets were spread across more than one AZ for the intended network layout.
+- **Amazon EKS:** Runs the microservices as Kubernetes workloads.
+- **Amazon Route 53:** Hosts DNS records for the custom domain.
 
-For detailed documentation, see [Demo Documentation][docs]. If you're curious
-about a specific feature, the [docs landing page][docs] can point you in the
-right direction.
+This is a learning deployment, not a claim of production readiness. Before using it for production, review IAM permissions, network exposure, secrets handling, TLS, autoscaling, backups, observability, costs, and disaster recovery.
 
-## Demos featuring the Astronomy Shop
+## Technology stack
 
-We welcome any vendor to fork the project to demonstrate their services and
-adding a link below. The community is committed to maintaining the project and
-keeping it up to date for you.
+| Area | Tools |
+| --- | --- |
+| Cloud | AWS |
+| Infrastructure as Code | Terraform |
+| Containerization | Docker, multi-stage Dockerfiles |
+| Orchestration | Kubernetes, Amazon EKS |
+| Kubernetes packaging | Helm |
+| Continuous Integration | GitHub Actions |
+| Continuous Delivery / GitOps | Argo CD |
+| Networking and DNS | VPC, public/private subnets, Ingress, Route 53 |
+| Terraform state | Amazon S3 and DynamoDB locking (as configured in my setup) |
+| Application | OpenTelemetry Astronomy Shop Demo |
 
-|                           |                |                                  |
-|---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [OpenSearch]                     |
-| [AppDynamics]             | [Google Cloud] | [Sentry]                         |
-| [Aspecto]                 | [Grafana Labs] | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Guance]       | [Splunk]                         |
-| [Axoflow]                 | [Honeycomb.io] | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Instana]      | [TelemetryHub]                   |
-| [Coralogix]               | [Kloudfuse]    | [Teletrace]                      |
-| [Dash0]                   | [Liatrio]      | [Tracetest]                      |
-| [Datadog]                 | [Logz.io]      | [Uptrace]                        |
-| [Dynatrace]               | [New Relic]    |                                  |
+## Repository structure
 
-## Contributing
+Important project paths include:
 
-To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
-documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
-Monday at 8:30 AM PST and anyone is welcome.
+- `src/` — application microservices and source code.
+- `kubernetes/` — Kubernetes workload manifests, Services, and ingress configuration.
+- `.github/workflows/` — GitHub Actions workflows.
+- `docker-compose.yml` — local multi-container demo setup.
+- `docker-compose.minimal.yml` — reduced local demo configuration.
 
-## Project leadership
+Terraform and Helm paths may differ by branch or by the files used to provision the environment. Check the repository tree before running deployment commands.
 
-[Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer)
-([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
+## CI/CD workflow
 
-- [Juliano Costa](https://github.com/julianocosta89), Datadog
-- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
-- [Pierre Tessier](https://github.com/puckpuck), Honeycomb
+1. A code change is pushed to GitHub or a pull request is opened.
+2. GitHub Actions runs the configured checks, including service tests/build and code-quality steps where defined.
+3. The pipeline builds a container image and pushes it to the configured registry when the workflow conditions and credentials allow.
+4. The deployment configuration is updated to reference the intended image version, if that step is enabled in the workflow.
+5. Argo CD detects Git changes and reconciles the application's desired state into EKS using the configured manifests or Helm chart.
 
-[Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
-([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
+Use immutable image tags (for example, a commit SHA) rather than relying only on `latest`. Keep registry credentials and AWS credentials in GitHub Secrets or an appropriate identity-based configuration. Never commit real credentials, private keys, or sensitive `.env` values.
 
-- [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
-- [Penghan Wang](https://github.com/wph95), AppDynamics
-- [Reiley Yang](https://github.com/reyang), Microsoft
-- [Roger Coll](https://github.com/rogercoll), Elastic
-- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
+## Key things I learned
 
-Emeritus:
+- How multi-stage Dockerfiles reduce the runtime image to the artifacts and libraries actually needed.
+- How a multi-service application is modelled with Kubernetes Deployments and Services.
+- How Helm simplifies installation, upgrades, and removal of Kubernetes applications.
+- How VPCs, public/private subnets, Availability Zones, and bastion access fit into an EKS deployment.
+- How Terraform remote state and state locking help coordinate infrastructure changes.
+- How ingress rules and DNS records work together to expose an application through a custom domain.
+- How CI image building and GitOps-based delivery separate application packaging from cluster reconciliation.
+- How to debug real deployment problems involving networking, load balancer provisioning, IngressClass ownership, DNS, Terraform state, and Kubernetes resources.
 
-- [Austin Parker](https://github.com/austinlparker)
-- [Carter Socha](https://github.com/cartersocha)
-- [Michael Maxwell](https://github.com/mic-max)
-- [Morgan McLean](https://github.com/mtwo)
+## Running the demo locally
 
+For local development, start with the upstream OpenTelemetry Demo instructions rather than assuming the AWS deployment configuration is portable:
+
+- [OpenTelemetry Demo repository](https://github.com/open-telemetry/opentelemetry-demo)
+- [Docker deployment documentation](https://opentelemetry.io/docs/demo/docker_deployment/)
+- [Kubernetes deployment documentation](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
+
+The AWS deployment requires your own AWS account, IAM permissions, Terraform variables, DNS configuration, registry credentials, and Kubernetes tooling. Review the configuration before applying it. Cloud resources can incur charges.
+
+## Screenshots
+
+Add screenshots you have committed to this repository, then link them using their exact case-sensitive paths. Example:
+
+```markdown
+![Astronomy Shop homepage](docs/images/home-page.png)
+![EKS workloads](docs/images/eks-workloads.png)
+![Argo CD application](docs/images/argocd-application.png)
+```
+
+GitHub image links return 404 when the referenced file is not committed on the branch at that path. Confirm the file exists in the repository before adding it here.
+
+## Credits and references
+
+- **Application:** [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
+- **DevOps learning reference:** [Abhishek Veeramalla's ultimate-devops-project-demo](https://github.com/iam-veeramalla/ultimate-devops-project-demo)
+- **My repository:** [dugutarithish/ultimate-devops-project-demo](https://github.com/dugutarithish/ultimate-devops-project-demo)
+
+This repository builds on upstream open-source work. Credit original authors and retain the applicable license and attribution notices. My contribution described here is the infrastructure, deployment, and CI/CD learning and customisation performed for this environment.
